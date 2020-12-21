@@ -42,8 +42,8 @@ HOW TO USE:
 
 * NOTE that %username% should be the Backdrop user's name who has been assigned one of the roles mentioned in HOW TO SETUP: #2 .
 - After authentication, all API endpoints can be accessed with the username following /api/ in the path path ex.
-  https://somesite.net/api/someuser/page/list
-  https://somesite.net/api/someuser/node/42
+-  https://somesite.net/api/someuser/page/list
+-  https://somesite.net/api/someuser/node/42
 
 EXAMPLE USAGE:
 
