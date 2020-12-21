@@ -16,24 +16,25 @@ HOW TO SETUP:
   * 1a. A user with the role "Simple API User" may access the API for one hour after which they will need to re-authenticate.
   * 1b. A user with the role "Simple API Full" has access to the API with no time limit.
 
-2. Assign one of the roles to any user you wish to give API access to.
+2. Assign one of the modules user roles to any user you wish to give API access to.
 
 3. It's recommended that the admin set up a system cron job or scheduled task to execute Backdrop Cron at least once an hour.
     as described here: https://backdropcms.org/cron.
 
 HOW TO USE:
 -----------
-- Simple API provides a list of authenticated users here: /admin/reports/simple_api
-- To revoke a users access to the API, un-check any API user roles in the users profile, then save to update the user.
-- Running Cron at https://sitename.com/admin/config/system/cron will remove the users access immediately.
+- Simple API provides a list of authenticated users here: https://sitename.com/admin/reports/simple_api
+- To revoke a users access to the API,
+    * 1. Un-check any API user roles in the user's profile, then save to update the user.
+    * 2. Running Cron at https://sitename.com/admin/config/system/cron will remove the users access immediately.
 - Authentication is simplified: a properly configured user only has to access https://sitename.com/api/%username%/login
-  to be authenticated for one hour.
+  to be authenticated.
 - No passwords are needed to authenticate.
 
 1. https://sitename.com/api/%username%/login -- A Backdrop user name can be passed to login to the API
 2. https://sitename.com/api/%username%/user/UID -- where the UID is a number like 23
 3. https://sitename.com/api/%username%/user/list -- a list of UIDs and user names
-4. https://sitename.com/api/%username%/%nodetype%/list -- a list of nodes with NID, type, title and status, by  type.
+4. https://sitename.com/api/%username%/%node-type%/list -- a list of nodes with NID, type, title and status, by node-type.
 5. https://sitename.com/api/%username%/node/NID -- where the NID is a number like 32 or
 6. https://sitename.com/api/%username%/node/0/create -- POST an array of variables to create a new node of any type
 7. https://sitename.com/api/%username%/node/NID/update -- POST an array of variables to update a node of any type where the NID is a number like 32
