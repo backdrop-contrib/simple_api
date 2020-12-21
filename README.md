@@ -16,7 +16,7 @@ HOW TO SETUP:
   * 1a. A user with the role "Simple API User" may access the API for one hour after which they will need to re-authenticate.
   * 1b. A user with the role "Simple API Full" has access to the API with no time limit.
 
-2. Assign one of the modules user roles to any user you wish to give API access to.
+2. Assign one of the module's user roles to any user you wish to give API access to.
 
 3. It's recommended that the admin set up a system cron job or scheduled task to execute Backdrop Cron at least once an hour.
     as described here: https://backdropcms.org/cron.
@@ -32,13 +32,13 @@ HOW TO USE:
 - No passwords are needed to authenticate.
 
 1. https://sitename.com/api/%username%/login -- A Backdrop user name can be passed to login to the API
-2. https://sitename.com/api/%username%/user/UID -- where the UID is a number like 23
-3. https://sitename.com/api/%username%/user/list -- a list of UIDs and user names
-4. https://sitename.com/api/%username%/%node-type%/list -- a list of nodes with NID, type, title and status, by node-type.
-5. https://sitename.com/api/%username%/node/NID -- where the NID is a number like 32 or
-6. https://sitename.com/api/%username%/node/0/create -- POST an array of variables to create a new node of any type
-7. https://sitename.com/api/%username%/node/NID/update -- POST an array of variables to update a node of any type where the NID is a number like 32
-8. https://sitename.com/api/%username%/node/NID/delete -- POST an array of variables to delete a node of any type where the NID is a number like 32
+2. https://sitename.com/api/%username%/user/UID -- Returns a complete user where the UID is a number like 23
+3. https://sitename.com/api/%username%/user/list -- Returns a list of UIDs and user names
+4. https://sitename.com/api/%username%/%node-type%/list -- Returns a list of nodes with NID, type, title and status, by node-type.
+5. https://sitename.com/api/%username%/node/NID -- Returns a complete node where the NID is a number like 32
+6. https://sitename.com/api/%username%/node/0/create -- Creates a node of any type.
+7. https://sitename.com/api/%username%/node/NID/update -- Updates a node where the NID is a number like 32
+8. https://sitename.com/api/%username%/node/NID/delete -- Deletes a node where the NID is a number like 32
 
 * NOTE that %username% should be the Backdrop user's name who has been assigned one of the roles mentioned in HOW TO SETUP: #2 .
 - After authentication, all API endpoints can be accessed with the username following /api/ in the path path ex.
