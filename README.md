@@ -33,7 +33,7 @@ HOW TO USE:
 1. https://sitename.com/api/%username%/login -- A Backdrop user name can be passed to login to the API
 2. https://sitename.com/api/%username%/user/UID -- where the UID is a number like 23
 3. https://sitename.com/api/%username%/user/list -- a list of UIDs and user names
-4. https://sitename.com/api/%username%/node/list -- a list of nodes with NID, type, title and status
+4. https://sitename.com/api/%username%/%nodetype%/list -- a list of nodes with NID, type, title and status, by  type.
 5. https://sitename.com/api/%username%/node/NID -- where the NID is a number like 32 or
 6. https://sitename.com/api/%username%/node/0/create -- POST an array of variables to create a new node of any type
 7. https://sitename.com/api/%username%/node/NID/update -- POST an array of variables to update a node of any type where the NID is a number like 32
