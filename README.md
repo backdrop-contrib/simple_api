@@ -52,81 +52,74 @@ HOW TO USE:
 
 EXAMPLE USAGE:
 
-/* --- LOGIN --- */
+* LOGIN
+- $handle = curl_init();
+- $url = "http://mysite.net/api/username/login";
+- curl_setopt_array($handle, array(
+-  CURLOPT_URL => $url,
+-	 CURLOPT_RETURNTRANSFER => TRUE,
+-	 )
+- );
+- $data = curl_exec($handle);
+- curl_close($handle);
+- echo $data;
 
-$handle = curl_init();
-$url = "http://mysite.net/api/username/login";
-curl_setopt_array($handle, array(
-	CURLOPT_URL => $url,
-	CURLOPT_RETURNTRANSFER => TRUE,
-	)
-);
-$data = curl_exec($handle);
-curl_close($handle);
-echo $data;
+* CREATE A NODE
+- $handle = curl_init();
+- $url = "http://mysite.net/api/username/node/0/create";
+- $postData = array(
+-	 'title' => 'My New Page',
+-	 'type' => 'page',
+-	 'status' => 1,
+-	 'promote' => 0,
+-	 'comment' => 1,
+-	 'body[und][0][value]' => 'Place some interesting text into the body of the new node.',
+- );
+- curl_setopt_array($handle, array(
+-	  CURLOPT_URL => $url,
+-	  CURLOPT_POST => TRUE,
+-   CURLOPT_POSTFIELDS => $postData,
+-	  CURLOPT_RETURNTRANSFER => TRUE,
+-	  )
+- );
+- $data = curl_exec($handle);
+- curl_close($handle);
+- echo $data;
 
+* UPDATE A NODE
+- $handle = curl_init();
+- $url = "https://mysite.net/api/username/node/57/update";
+- $postData = array(
+- 	'nid' => '57',
+- 	'body[und][0][value]' => 'Place some other even more interesting text into the body of the node.',
+- );
+- curl_setopt_array($handle, array(
+- 	CURLOPT_URL => $url,
+- 	CURLOPT_POST => TRUE,
+- 	CURLOPT_POSTFIELDS => $postData,
+- 	CURLOPT_RETURNTRANSFER => TRUE,
+- 	)
+- );
+- $data = curl_exec($handle);
+- curl_close($handle);
+- echo $data;
 
-/* --- CREATE A NODE --- */
-
-$handle = curl_init();
-$url = "http://mysite.net/api/username/node/0/create";
-$postData = array(
-	'title' => 'My New Page',
-	'type' => 'page',
-	'status' => 1,
-	'promote' => 0,
-	'comment' => 1,
-	'body[und][0][value]' => 'Place some interesting text into the body of the new node.',
-);
-curl_setopt_array($handle, array(
-	CURLOPT_URL => $url,
-	CURLOPT_POST => TRUE,
-	CURLOPT_POSTFIELDS => $postData,
-	CURLOPT_RETURNTRANSFER => TRUE,
-	)
-);
-$data = curl_exec($handle);
-curl_close($handle);
-echo $data;
-
-
-/* --- UPDATE A NODE --- */
-
-$handle = curl_init();
-$url = "https://mysite.net/api/username/node/57/update";
-$postData = array(
-	'nid' => '57',
-	'body[und][0][value]' => 'Place some other even more interesting text into the body of the node.',
-);
-curl_setopt_array($handle, array(
-	CURLOPT_URL => $url,
-	CURLOPT_POST => TRUE,
-	CURLOPT_POSTFIELDS => $postData,
-	CURLOPT_RETURNTRANSFER => TRUE,
-	)
-);
-$data = curl_exec($handle);
-curl_close($handle);
-echo $data;
-
-
-/* --- DELETE A NODE --- */
-
-$handle = curl_init();
-$url = "https://mysite.net/api/username/node/57/delete";
-$postData = array(
-	'nid' => '57',
-);
-curl_setopt_array($handle, array(
-	CURLOPT_URL => $url,
-	CURLOPT_POST => true,
-	CURLOPT_POSTFIELDS => $postData,
-	CURLOPT_RETURNTRANSFER => true,
-	)
-);
-$data = curl_exec($handle);
-curl_close($handle);
-echo $data;
+* DELETE A NODE
+- $handle = curl_init();
+- $url = "https://mysite.net/api/username/node/57/delete";
+- $postData = array(
+-  'nid' => '57',
+- );
+- curl_setopt_array($handle, array(
+- 	CURLOPT_URL => $url,
+- 	CURLOPT_POST => true,
+- 	CURLOPT_POSTFIELDS => $postData,
+- 	CURLOPT_RETURNTRANSFER => true,
+- 	)
+- );
+- $data = curl_exec($handle);
+- curl_close($handle);
+- echo $data;
 
 
 LICENSE:
