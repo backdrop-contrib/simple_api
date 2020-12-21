@@ -1,0 +1,81 @@
+<?php
+
+/**
+ * @file
+ * Contains database schema and install functions for simple_api.
+ */
+
+/**
+ * Impliments hook_install().
+ */
+function simple_api_install() {
+	$roles = array('simpleApiUser' => 'Simple API User', 'simpleApiFull' => 'Simple API Full');
+	foreach($roles as $name => $label) {
+		$existing_role = user_role_load($name);
+		if (empty($existing_role)) {
+			$role = new stdClass();
+			$role->name = $name;
+      $role->label = $label;
+			user_role_save($role);
+		}
+	}
+}
+
+/**
+ * Impliments hook_uninstall().
+ */
+function simple_api_uninstall() {
+	$roles = array('simpleApiUser', 'simpleApiFull');
+	foreach($roles as $name) {
+		$existing_role = user_role_load($name);
+		if (!empty($existing_role)) {
+			user_role_delete($name);
+		}
+	}
+}
+
+/**
+ * Impliments hook_schema().
+ */
+function simple_api_schema() {
+  $schema['simple_api'] = array(
+    'description' => 'Login table for Simple API',
+    'fields' => array(
+      'usersname' => array(
+        'type' => 'varchar',
+        'length' => 128,
+        'not null' => FALSE,
+        'description' => 'User Name',
+      ),
+      'usersid' => array(
+        'type' => 'varchar',
+        'length' => 64,
+        'not null' => FALSE,
+        'description' => 'User ID',
+      ),
+      'timestamp' => array(
+        'type' => 'varchar',
+        'length' => 64,
+        'not null' => FALSE,
+        'description' => 'Login Timestamp',
+      ),
+      'ipaddress' => array(
+        'type' => 'varchar',
+        'length' => 64,
+        'not null' => FALSE,
+        'description' => 'Origin IP',
+      ),
+      'authorized' => array(
+        'type' => 'varchar',
+        'length' => 64,
+        'not null' => FALSE,
+        'description' => 'Authorization enabled?',
+      ),
+    ),
+    'unique keys' => array(
+      'usersname' => array('usersname'),
+    ),
+  );
+  return $schema;
+}
+

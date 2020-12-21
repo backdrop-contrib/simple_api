@@ -1,0 +1,288 @@
+<?php
+
+/**
+ * @file
+ * Simple API primary module file.
+ */
+include 'includes/simple_api.crud.inc';
+include 'includes/simple_api.auth.inc';
+
+/**
+ * Implements hook_menu().
+ */
+function simple_api_menu() {
+  $items = array();
+  $items['api'] = array(
+    'page callback' => 'simple_api_viewport',
+    'access callback' => TRUE,
+  );
+  $items['api/%/login'] = array(
+    'page callback' => 'simple_api_auth',
+    'access callback' => TRUE,
+    'page arguments' => array(1),
+    'type' => MENU_CALLBACK,
+  );
+  $items['api/%/%/%'] = array(
+    'page callback' => 'simple_api_return',
+    'access callback' => TRUE,
+    'page arguments' => array(1,2,3),
+    'type' => MENU_CALLBACK,
+  );
+  $items['api/%/node/%/%'] = array(
+    'page callback' => 'simple_api_crud',
+    'access callback' => TRUE,
+    'page arguments' => array(1,3,4),
+    'type' => MENU_CALLBACK,
+  );
+  $items['admin/reports/simple_api'] = array(
+    'title' => 'Simple API',
+    'description' => 'Simple API active sessions.',
+    'page callback' => 'simple_api_admin',
+    'access callback' => TRUE,
+    'access arguments' => array(
+      'access administration pages'
+    ),
+    'type' => MENU_NORMAL_ITEM,
+  );
+  return $items;
+}
+
+/**
+ * Return node and user data
+ */
+function simple_api_return($user = NULL, $type = NULL, $path_var = NULL) {
+  if (simple_api_check_auth($user)) {
+    if ( $type != 'user' ) {
+      switch (TRUE) {
+        case ( $path_var == "list"):
+      		$return = simple_api_nodelist_viewport($type);
+      		  break;
+        case ($path_var != "list") :
+      		$return = simple_api_node_viewport($path_var);
+      		  break;
+        default:
+      		$return = simple_api_viewport();
+      }
+      return $return;
+    }
+    if ( $type == 'user' ) {
+      switch (TRUE) {
+        case ( $path_var == "list"):
+          $return = simple_api_userlist_viewport();
+            break;
+        case ($path_var != "list") :
+          $return = simple_api_user_viewport($path_var);
+            break;
+        default:
+          $return = simple_api_viewport();
+      }
+      return $return;
+    }
+  }
+  else {
+    simple_api_unauth();
+  }
+}
+
+/**
+ * Displays a default response to non-valid api paths.
+ */
+ function simple_api_viewport() {
+  $message = array(
+    "MESSAGE" => "Simple API, v1.x-1.x",
+  );
+  backdrop_json_output($message);
+  backdrop_exit();
+ }
+
+ /**
+  * Display unauthorized message.
+  */
+ function simple_api_unauth() {
+  $message = array(
+    "ERROR" => "Unauthorized",
+  );
+  backdrop_json_output($message);
+  backdrop_exit();
+ }
+
+/**
+ * nodes by NID.
+ */
+function simple_api_node_viewport($nid) {
+  $node = node_load($nid);
+  if ($node) {
+    backdrop_json_output($node);
+    backdrop_exit();
+  }
+  else {
+    backdrop_json_output( array("ERROR" => "Your request returned no data") );
+    backdrop_exit();
+  }
+}
+
+/**
+ * a list of nodes by type
+ */
+function simple_api_nodelist_viewport($type) {
+  $nid_query = db_select('node', 'n')
+    ->fields('n', array('nid', 'title', 'type', 'status'))
+    ->condition('n.type', $type)
+    ->execute();
+  while ($row = $nid_query->fetchAssoc()) {
+    $nodeInfo[] = $row;
+  }
+  if ( !empty($nodeInfo) ) {
+    backdrop_json_output($nodeInfo);
+    backdrop_exit();
+  }
+  else {
+    backdrop_json_output( array("ERROR" => "Your request returned no data") );
+    backdrop_exit();
+  }
+}
+
+/**
+ * Users by UID.
+ */
+function simple_api_user_viewport($uid) {
+  $loaded_user = user_load($uid);
+  if ($loaded_user) {
+    /* remove the password field for security */
+    unset($loaded_user->pass);
+    backdrop_json_output($loaded_user);
+    backdrop_exit();
+  }
+  else {
+    backdrop_json_output( array("ERROR" => "Your request returned no data") );
+    backdrop_exit();
+  }
+}
+
+/**
+ * list all users
+ */
+function simple_api_userlist_viewport() {
+  $user_query = db_select('users', 'n')
+    ->fields('n', array('uid', 'name', 'status'))
+    ->execute();
+  while ($row = $user_query->fetchAssoc()) {
+    if ($row['uid'] != "0") {
+      $users[] = $row;
+    }
+  }
+  if ( !empty($users) ) {
+    backdrop_json_output($users);
+    backdrop_exit();
+  }
+  else {
+    backdrop_json_output( array("ERROR" => "Your request returned no data") );
+    backdrop_exit();
+  }
+}
+
+/**
+ * Implements hook_admin().
+ */
+function simple_api_admin() {
+$users_array = array();
+/* get a list of usernames from the database that are currently authorized */
+$outputstring = '<b>These API users are currently authenticated:</b><br><br>';
+$usersquery = db_select('simple_api', 'n')
+  ->fields('n', array('usersname', 'timestamp', 'ipaddress'))
+  ->condition('authorized', 'yes')
+  ->execute();
+while ($row = $usersquery->fetchAssoc()) {
+  $users_array[] = $row;
+}
+if (!empty($users_array)) {
+  foreach ($users_array as $user) {
+    $convertedtime = date('d/m/Y h:i:s', $user['timestamp']);
+    $outputstring .= '<i>' . $user['usersname'] . '</i> logged in from ' . $user['ipaddress'] . ' at ' . $convertedtime . '<br><br>';
+  }
+}
+else {
+  $outputstring .= 'No API users are currently authenticated';
+}
+return $outputstring;
+}
+
+/**
+ * Implementts hook_cron()
+ */
+function simple_api_cron() {
+  // expire API users with the 'simpleApiUser' role after one hour
+  $timecheck_query = db_select('simple_api', 'n')
+    ->fields('n', array('timestamp', 'usersname', 'authorized', 'usersid'))
+    ->execute();
+  while ($row = $timecheck_query->fetchAssoc()) {
+    $apiUser = user_load($row['usersid']);
+    // expire the session if longer than 1 hour
+    if ( user_has_role('simpleApiUser', $apiUser) ) {
+      if ($row['timestamp'] < time() - (60 * 60) && $row['authorized'] != 'no') {
+        $query = db_update('simple_api')
+          ->fields(array('authorized' => 'no'))
+          ->condition('usersname', $row['usersname'])
+          ->execute();
+        $type = "simple_api";
+        $message = "Simple API User " . $row['usersname'] . " session has ended";
+        watchdog($type, $message, $variables = array(), $severity = WATCHDOG_INFO, $link = NULL);
+      }
+    }
+  }
+  // delete users in the auth table that no longer have any API role set
+  $uid_query = db_select('users', 'n')
+    ->fields('n', array('uid', 'name'))
+    ->execute()
+    ->fetchAll();
+  foreach ($uid_query as $dataObject) {
+    // exclude ACs
+    if ($dataObject->uid != '0') {
+      // if the Backdrop user name is in our auth table...
+      if (simple_api_check_user($dataObject->name)) {
+        // load the user object
+        $loadedUser = user_load($dataObject->uid);
+        // check to see if they still have an API role set
+        if ( !user_has_role('simpleApiFull', $loadedUser) && !user_has_role('simpleApiUser', $loadedUser)) {
+          // if not, remove the user entry from the auth table
+          simple_api_delete_user($dataObject->name);
+        }
+      }
+    }
+  }
+}
+
+/**
+ * check to see if a user is authorized
+ */
+function simple_api_check_auth($uname) {
+  $auth_check = db_select('simple_api', 'n')
+    ->fields('n', array('authorized'))
+    ->condition('n.usersname', $uname)
+    ->execute();
+  ($auth_check->fetchField() == "yes") ? $return = TRUE : $return = FALSE;
+  return $return;
+}
+
+/**
+ * check to see if a user exists in the api users table
+ */
+function simple_api_check_user($uname) {
+  $usr_check = db_select('simple_api', 'n')
+    ->fields('n', array('usersname'))
+    ->condition('n.usersname', $uname)
+    ->execute();
+  ($usr_check->fetchField() == $uname) ? $return = TRUE : $return = FALSE;
+  return $return;
+}
+
+/**
+ * delete an entry from the auth table
+ */
+function simple_api_delete_user($uname) {
+  $deleted = db_delete('simple_api')
+    ->condition('usersname', $uname)
+    ->execute();
+}
+
+

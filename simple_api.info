@@ -1,0 +1,5 @@
+type = module
+name = Simple API
+description = A json API for Backdrop.
+package = Other
+backdrop = 1.x
