@@ -26,7 +26,7 @@ HOW TO USE:
 - Simple API provides a list of authenticated users here: https://sitename.com/admin/reports/simple_api
 - To revoke a users access to the API,
     * 1. Un-check any API user roles in the user's profile, then save to update the user.
-    * 2. Running Cron at https://sitename.com/admin/config/system/cron will remove the users access immediately.
+    * 2. Running Cron at https://sitename.com/admin/config/system/cron will remove the user's API access immediately.
 - Authentication is simplified: a properly configured user only has to access https://sitename.com/api/%username%/login
   to be authenticated.
 - No passwords are needed to authenticate.
@@ -42,7 +42,8 @@ HOW TO USE:
 
 * NOTE that %username% should be the Backdrop user's name who has been assigned one of the roles mentioned in HOW TO SETUP: #2 .
 - After authentication, all API endpoints can be accessed with the username following /api/ in the path path ex.
-  https://somesite.net/api/someuser/page/42
+  https://somesite.net/api/someuser/page/list
+  https://somesite.net/api/someuser/node/42
 
 EXAMPLE USAGE:
 
