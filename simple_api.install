@@ -9,29 +9,29 @@
  * Impliments hook_install().
  */
 function simple_api_install() {
-	$roles = array('simpleApiUser' => 'Simple API User', 'simpleApiFull' => 'Simple API Full');
-	foreach($roles as $name => $label) {
-		$existing_role = user_role_load($name);
-		if (empty($existing_role)) {
-			$role = new stdClass();
-			$role->name = $name;
+  $roles = array('simpleApiUser' => 'Simple API User', 'simpleApiFull' => 'Simple API Full');
+  foreach($roles as $name => $label) {
+    $existing_role = user_role_load($name);
+    if (empty($existing_role)) {
+      $role = new stdClass();
+      $role->name = $name;
       $role->label = $label;
-			user_role_save($role);
-		}
-	}
+      user_role_save($role);
+    }
+  }
 }
 
 /**
  * Impliments hook_uninstall().
  */
 function simple_api_uninstall() {
-	$roles = array('simpleApiUser', 'simpleApiFull');
-	foreach($roles as $name) {
-		$existing_role = user_role_load($name);
-		if (!empty($existing_role)) {
-			user_role_delete($name);
-		}
-	}
+  $roles = array('simpleApiUser', 'simpleApiFull');
+  foreach($roles as $name) {
+    $existing_role = user_role_load($name);
+    if (!empty($existing_role)) {
+      user_role_delete($name);
+    }
+  }
 }
 
 /**
